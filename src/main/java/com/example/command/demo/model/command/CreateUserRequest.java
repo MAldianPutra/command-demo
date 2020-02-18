@@ -14,16 +14,16 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class CreateUserRequest {
 
-    @NotBlank
-    @Length(max = 40)
-    private String userName;
+  @NotBlank
+  @Length(max = 40)
+  private String userName;
 
-    @NotBlank
-    @Length(max = 40)
-    private String userAddress;
+  @NotBlank
+  @Length(max = 40)
+  private String userAddress;
 
-    @NotBlank
-    @Length(max = 10)
-    private String userGender;
+  @NotBlank
+  @Length(max = 10)
+  private String userGender;
 
 }
