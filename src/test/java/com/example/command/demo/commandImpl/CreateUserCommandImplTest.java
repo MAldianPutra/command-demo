@@ -4,7 +4,7 @@ import com.example.command.demo.entity.User;
 import com.example.command.demo.enums.UserType;
 import com.example.command.demo.model.command.CreateUserRequest;
 import com.example.command.demo.model.web.CreateUserResponse;
-import com.example.command.demo.repository.UserReactiveRepository;
+import com.example.command.demo.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ class CreateUserCommandImplTest {
   CreateUserCommandImpl createUserCommand;
 
   @Mock
-  UserReactiveRepository userReactiveRepository;
+  UserRepository userRepository;
 
   private User user;
   private CreateUserRequest request;
@@ -57,12 +57,12 @@ class CreateUserCommandImplTest {
 
   @AfterEach
   void tearDown() {
-    verifyNoMoreInteractions(userReactiveRepository);
+    verifyNoMoreInteractions(userRepository);
   }
 
   @Test
   void execute() {
-    when(userReactiveRepository.save(any(User.class))).thenReturn(
+    when(userRepository.save(any(User.class))).thenReturn(
         Mono.just(user));
 
     CreateUserResponse result = createUserCommand.execute(request).block();
@@ -70,6 +70,6 @@ class CreateUserCommandImplTest {
     assertEquals(this.response.getUserAddress(), result.getUserAddress());
     assertEquals(this.response.getUserGender(), result.getUserGender());
 
-    verify(userReactiveRepository).save(any(User.class));
+    verify(userRepository).save(any(User.class));
   }
 }

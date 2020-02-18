@@ -3,7 +3,7 @@ package com.example.command.demo.commandImpl;
 import com.example.command.demo.entity.User;
 import com.example.command.demo.enums.UserType;
 import com.example.command.demo.model.command.UpdateUserRequest;
-import com.example.command.demo.repository.UserReactiveRepository;
+import com.example.command.demo.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ class UpdateUserCommandImplTest {
   UpdateUserCommandImpl updateUserCommand;
 
   @Mock
-  UserReactiveRepository userReactiveRepository;
+  UserRepository userRepository;
 
   private User user;
   private UpdateUserRequest request;
@@ -50,20 +50,20 @@ class UpdateUserCommandImplTest {
 
   @AfterEach
   void tearDown() {
-    verifyNoMoreInteractions(userReactiveRepository);
+    verifyNoMoreInteractions(userRepository);
   }
 
   @Test
   void execute() {
-    when(userReactiveRepository.save(any(User.class))).thenReturn(
+    when(userRepository.save(any(User.class))).thenReturn(
         Mono.just(user));
-    when(userReactiveRepository.getFirstByUserName(userName)).thenReturn(
+    when(userRepository.getFirstByUserName(userName)).thenReturn(
         Mono.just(user));
 
     String result = updateUserCommand.execute(request).block();
     assertEquals("User updated successfully.", result);
 
-    verify(userReactiveRepository).save(any(User.class));
-    verify(userReactiveRepository).getFirstByUserName(userName);
+    verify(userRepository).save(any(User.class));
+    verify(userRepository).getFirstByUserName(userName);
   }
 }

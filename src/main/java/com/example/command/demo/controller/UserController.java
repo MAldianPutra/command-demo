@@ -35,8 +35,7 @@ public class UserController {
     this.commandExecutor = commandExecutor;
   }
 
-  @PostMapping(value = "/users",
-      produces = MediaType.APPLICATION_JSON_VALUE,
+  @PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE,
       consumes = MediaType.APPLICATION_JSON_VALUE)
   public Mono<Response<CreateUserResponse>> createUser(@RequestBody CreateUserRequest request) {
     return commandExecutor.execute(CreateUserCommand.class, request)
@@ -44,16 +43,14 @@ public class UserController {
         .subscribeOn(Schedulers.elastic());
   }
 
-  @GetMapping(value = "/users",
-      produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<Response<GetUserResponse>> getUser(@RequestParam String userName) {
     return commandExecutor.execute(GetUserCommand.class, userName)
         .map(ResponseHelper::ok)
         .subscribeOn(Schedulers.elastic());
   }
 
-  @PutMapping(value = "/users",
-      produces = MediaType.APPLICATION_JSON_VALUE,
+  @PutMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE,
       consumes = MediaType.APPLICATION_JSON_VALUE)
   public Mono<Response<String>> updateUser(@RequestBody UpdateUserRequest request) {
     return commandExecutor.execute(UpdateUserCommand.class, request)
@@ -61,8 +58,7 @@ public class UserController {
         .subscribeOn(Schedulers.elastic());
   }
 
-  @DeleteMapping(value = "/users",
-      produces = MediaType.APPLICATION_JSON_VALUE)
+  @DeleteMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<Response<String>> deleteUser(@RequestParam String userName) {
     return commandExecutor.execute(DeleteUserCommand.class, userName)
         .map(ResponseHelper::ok)

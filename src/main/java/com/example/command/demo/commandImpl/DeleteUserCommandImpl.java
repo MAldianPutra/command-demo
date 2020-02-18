@@ -1,8 +1,8 @@
 package com.example.command.demo.commandImpl;
 
 import com.example.command.demo.command.DeleteUserCommand;
-import com.example.command.demo.repository.UserReactiveRepository;
 import com.example.command.demo.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -10,30 +10,19 @@ import reactor.core.publisher.Mono;
 public class DeleteUserCommandImpl implements DeleteUserCommand {
 
   private UserRepository userRepository;
-  private UserReactiveRepository userReactiveRepository;
 
-  public DeleteUserCommandImpl(UserRepository userRepository,
-      UserReactiveRepository userReactiveRepository) {
+  @Autowired
+  public DeleteUserCommandImpl(UserRepository userRepository) {
     this.userRepository = userRepository;
-    this.userReactiveRepository = userReactiveRepository;
   }
-
-//  @Override
-//  public Mono<String> execute(String userName) {
-//    return Mono.fromCallable(() -> userRepository.getFirstByUserName(userName))
-//        .map(user -> {
-//          userRepository.delete(user);
-//          return "User deleted successfully";
-//        });
-//  }
 
   @Override
   public Mono<String> execute(String userName) {
-    return userReactiveRepository.getFirstByUserName(userName)
-        .map(user -> {
-          userReactiveRepository.delete(user);
-          return "User deleted successfully";
-        });
+    return userRepository.getFirstByUserName(userName)
+        .flatMap(user -> userRepository.delete(user)
+            .thenReturn("User deleted successfully."));
   }
+
+
 
 }

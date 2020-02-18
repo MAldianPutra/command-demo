@@ -3,7 +3,7 @@ package com.example.command.demo.commandImpl;
 import com.example.command.demo.entity.User;
 import com.example.command.demo.enums.UserType;
 import com.example.command.demo.model.web.GetUserResponse;
-import com.example.command.demo.repository.UserReactiveRepository;
+import com.example.command.demo.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ class GetUserCommandImplTest {
   private GetUserCommandImpl getUserCommand;
 
   @Mock
-  private UserReactiveRepository userReactiveRepository;
+  private UserRepository userRepository;
 
   private User user;
   private GetUserResponse response;
@@ -51,18 +51,18 @@ class GetUserCommandImplTest {
 
   @AfterEach
   void tearDown() {
-    verifyNoMoreInteractions(userReactiveRepository);
+    verifyNoMoreInteractions(userRepository);
   }
 
   @Test
   void execute() {
-    when(userReactiveRepository.getFirstByUserName(userName)).thenReturn(
+    when(userRepository.getFirstByUserName(userName)).thenReturn(
         Mono.just(user));
 
     GetUserResponse result = getUserCommand.execute(userName).block();
     assertEquals(response, result);
 
-    verify(userReactiveRepository).getFirstByUserName(userName);
+    verify(userRepository).getFirstByUserName(userName);
   }
 
 }

@@ -2,7 +2,7 @@ package com.example.command.demo.commandImpl;
 
 import com.example.command.demo.entity.User;
 import com.example.command.demo.enums.UserType;
-import com.example.command.demo.repository.UserReactiveRepository;
+import com.example.command.demo.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ class DeleteUserCommandImplTest {
   DeleteUserCommandImpl deleteUserCommand;
 
   @Mock
-  UserReactiveRepository userReactiveRepository;
+  UserRepository userRepository;
 
   private User user;
   private final String userName = "userName";
@@ -43,18 +43,19 @@ class DeleteUserCommandImplTest {
 
   @AfterEach
   void tearDown() {
-    verifyNoMoreInteractions(userReactiveRepository);
+    verifyNoMoreInteractions(userRepository);
   }
 
   @Test
   void execute() {
-    when(userReactiveRepository.getFirstByUserName(userName)).thenReturn(
+    when(userRepository.getFirstByUserName(userName)).thenReturn(
         Mono.just(user));
+    when(userRepository.delete(user)).thenReturn(Mono.empty());
 
     String response = deleteUserCommand.execute(userName).block();
-    assertEquals("User deleted successfully", response);
+    assertEquals("User deleted successfully.", response);
 
-    verify(userReactiveRepository).getFirstByUserName(userName);
-    verify(userReactiveRepository).delete(user);
+    verify(userRepository).getFirstByUserName(userName);
+    verify(userRepository).delete(user);
   }
 }

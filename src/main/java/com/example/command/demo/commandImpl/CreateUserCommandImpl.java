@@ -5,10 +5,10 @@ import com.example.command.demo.entity.User;
 import com.example.command.demo.enums.UserType;
 import com.example.command.demo.model.command.CreateUserRequest;
 import com.example.command.demo.model.web.CreateUserResponse;
-import com.example.command.demo.repository.UserReactiveRepository;
 import com.example.command.demo.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -19,26 +19,16 @@ import java.util.UUID;
 public class CreateUserCommandImpl implements CreateUserCommand {
 
   private UserRepository userRepository;
-  private UserReactiveRepository userReactiveRepository;
 
-  public CreateUserCommandImpl(UserRepository userRepository,
-      UserReactiveRepository userReactiveRepository) {
+  @Autowired
+  public CreateUserCommandImpl(UserRepository userRepository) {
     this.userRepository = userRepository;
-    this.userReactiveRepository = userReactiveRepository;
   }
-
-  //    @Override
-  //    public Mono<CreateUserResponse> execute(CreateUserRequest request) {
-  //        return Mono.fromCallable(() -> createUser(request))
-  //            .map(user -> userRepository.save(user))
-  //            .map(this::createUserResponse);
-  //    }
-
 
   @Override
   public Mono<CreateUserResponse> execute(CreateUserRequest request) {
     return Mono.fromCallable(() -> createUser(request))
-        .flatMap(user -> userReactiveRepository.save(user))
+        .flatMap(user -> userRepository.save(user))
         .map(this::createUserResponse);
   }
 

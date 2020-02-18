@@ -3,7 +3,6 @@ package com.example.command.demo.commandImpl;
 import com.example.command.demo.command.GetUserCommand;
 import com.example.command.demo.entity.User;
 import com.example.command.demo.model.web.GetUserResponse;
-import com.example.command.demo.repository.UserReactiveRepository;
 import com.example.command.demo.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,24 +13,15 @@ import reactor.core.publisher.Mono;
 public class GetUserCommandImpl implements GetUserCommand {
 
   private UserRepository userRepository;
-  private UserReactiveRepository userReactiveRepository;
 
   @Autowired
-  public GetUserCommandImpl(UserRepository userRepository,
-      UserReactiveRepository userReactiveRepository) {
+  public GetUserCommandImpl(UserRepository userRepository) {
     this.userRepository = userRepository;
-    this.userReactiveRepository = userReactiveRepository;
   }
-
-  //    @Override
-  //    public Mono<GetUserResponse> execute(String userName) {
-  //        return Mono.fromCallable(() -> userRepository.getFirstByUserName(userName))
-  //                .map(this::getGetUserResponse);
-  //    }
 
   @Override
   public Mono<GetUserResponse> execute(String userName) {
-    return userReactiveRepository.getFirstByUserName(userName)
+    return userRepository.getFirstByUserName(userName)
         .map(this::getUserResponse);
   }
 
@@ -40,4 +30,5 @@ public class GetUserCommandImpl implements GetUserCommand {
     BeanUtils.copyProperties(user, response);
     return response;
   }
+
 }
