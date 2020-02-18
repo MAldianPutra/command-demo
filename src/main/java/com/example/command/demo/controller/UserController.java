@@ -33,8 +33,7 @@ public class UserController {
                .subscribeOn(Schedulers.elastic());
     }
 
-    @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE,
-        consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Response<GetUserResponse>> getUser(@RequestParam String userName) {
         return commandExecutor.execute(GetUserCommand.class, userName)
                 .map(ResponseHelper::ok)

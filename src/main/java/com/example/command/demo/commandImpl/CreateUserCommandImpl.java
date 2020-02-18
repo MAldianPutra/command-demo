@@ -2,6 +2,7 @@ package com.example.command.demo.commandImpl;
 
 import com.example.command.demo.command.CreateUserCommand;
 import com.example.command.demo.entity.User;
+import com.example.command.demo.enums.UserType;
 import com.example.command.demo.model.command.CreateUserRequest;
 import com.example.command.demo.model.web.CreateUserResponse;
 import com.example.command.demo.repository.UserRepository;
@@ -30,6 +31,7 @@ public class CreateUserCommandImpl implements CreateUserCommand {
     private User createUser(CreateUserRequest request) {
         User user = User.builder()
                 .userId(UUID.randomUUID().toString())
+                .userType(UserType.USER)
                 .build();
         BeanUtils.copyProperties(request, user);
         return user;

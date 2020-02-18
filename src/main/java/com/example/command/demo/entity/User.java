@@ -1,10 +1,13 @@
 package com.example.command.demo.entity;
 
+import com.example.command.demo.enums.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.UniqueElements;
+
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -36,5 +39,8 @@ public class User {
 
     @Field(value = User.FIELD_GENDER)
     private String userGender;
+
+    @Enumerated(EnumType.STRING)
+    private UserType userType;
 
 }

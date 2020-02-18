@@ -1,5 +1,6 @@
 package com.example.command.demo.model.web;
 
+import com.example.command.demo.enums.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,5 +19,7 @@ public class GetUserResponse {
     private String userAddress;
 
     private String userGender;
+
+    private UserType userType;
 
 }
