@@ -32,10 +32,10 @@ public class GetUserCommandImpl implements GetUserCommand {
   @Override
   public Mono<GetUserResponse> execute(String userName) {
     return userReactiveRepository.getFirstByUserName(userName)
-        .map(this::getGetUserResponse);
+        .map(this::getUserResponse);
   }
 
-  private GetUserResponse getGetUserResponse(User user) {
+  private GetUserResponse getUserResponse(User user) {
     GetUserResponse response = new GetUserResponse();
     BeanUtils.copyProperties(user, response);
     return response;

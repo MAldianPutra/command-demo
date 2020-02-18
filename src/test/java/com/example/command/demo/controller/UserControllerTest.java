@@ -3,14 +3,17 @@ package com.example.command.demo.controller;
 import com.blibli.oss.command.CommandExecutor;
 import com.example.command.demo.CommandDemoApplication;
 import com.example.command.demo.command.CreateUserCommand;
+import com.example.command.demo.command.DeleteUserCommand;
 import com.example.command.demo.command.GetUserCommand;
+import com.example.command.demo.command.UpdateUserCommand;
+import com.example.command.demo.enums.UserType;
 import com.example.command.demo.model.command.CreateUserRequest;
 import com.example.command.demo.model.command.UpdateUserRequest;
 import com.example.command.demo.model.web.CreateUserResponse;
 import com.example.command.demo.model.web.GetUserResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -26,15 +29,17 @@ import reactor.core.publisher.Mono;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = CommandDemoApplication.class)
+@SpringBootTest
 @AutoConfigureMockMvc
-class UserControllerTest {
+public class UserControllerTest {
 
   @MockBean
   private CommandExecutor commandExecutor;
@@ -47,27 +52,41 @@ class UserControllerTest {
   private GetUserResponse getUserResponse;
   private UpdateUserRequest updateUserRequest;
   private HttpHeaders httpHeaders;
-  private String request;
+  private final String request = "request";
+  private final String response = "response";
+  private final UserType userType = UserType.USER;
 
   @Before
   public void setUp() {
     initMocks(this);
     createUserRequest = CreateUserRequest.builder()
-        .userName("Test")
-        .userAddress("Test")
-        .userGender("Test")
+        .userName("userName")
+        .userAddress("userAddress")
+        .userGender("userGender")
         .build();
     createUserResponse = CreateUserResponse.builder()
-        .userId("Test")
-        .userName("Test")
-        .userAddress("Test")
-        .userGender("Test")
+        .userId("id")
+        .userName("userName")
+        .userAddress("userAddress")
+        .userGender("userGender")
+        .build();
+    getUserResponse = GetUserResponse.builder()
+        .userId("id")
+        .userName("userName")
+        .userAddress("userAddress")
+        .userGender("userGender")
+        .userType(userType)
+        .build();
+    updateUserRequest = UpdateUserRequest.builder()
+        .userName("userName")
+        .userAddress("userAddress")
+        .userGender("userGender")
         .build();
     httpHeaders = new HttpHeaders();
   }
 
   @Test
-  void createUser() throws Exception {
+  public void createUser() throws Exception {
     when(commandExecutor.execute(CreateUserCommand.class, createUserRequest)).thenReturn(
         Mono.just(createUserResponse));
 
@@ -84,11 +103,11 @@ class UserControllerTest {
   }
 
   @Test
-  void getUser() throws Exception {
+  public void getUser() throws Exception {
     when(commandExecutor.execute(GetUserCommand.class, request)).thenReturn(
         Mono.just(getUserResponse));
 
-    MockHttpServletRequestBuilder requestBuilder = get("/users")
+    MockHttpServletRequestBuilder requestBuilder = get("/users?userName=" + request)
         .headers(httpHeaders)
         .contentType(MediaType.APPLICATION_JSON);
 
@@ -99,10 +118,35 @@ class UserControllerTest {
   }
 
   @Test
-  void updateUser() {
+  public void updateUser() throws Exception {
+    when(commandExecutor.execute(UpdateUserCommand.class, updateUserRequest)).thenReturn(
+        Mono.just(response));
+
+    MockHttpServletRequestBuilder requestBuilder = put("/users")
+        .headers(httpHeaders)
+        .contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON)
+        .content(new ObjectMapper().writeValueAsString(updateUserRequest));
+
+    mockMvc.perform(asyncDispatch(mockMvc.perform(requestBuilder).andReturn()))
+        .andExpect(status().isOk());
+
+    verify(commandExecutor).execute(UpdateUserCommand.class, updateUserRequest);
   }
 
   @Test
-  void deleteUser() {
+  public void deleteUser() throws Exception {
+    when(commandExecutor.execute(DeleteUserCommand.class, request)).thenReturn(
+        Mono.just(response));
+
+    MockHttpServletRequestBuilder requestBuilder = delete("/users?userName=" + request)
+        .headers(httpHeaders)
+        .contentType(MediaType.APPLICATION_JSON);
+
+    mockMvc.perform(asyncDispatch(mockMvc.perform(requestBuilder).andReturn()))
+        .andExpect(status().isOk());
+
+    verify(commandExecutor).execute(DeleteUserCommand.class, request);
   }
+
 }

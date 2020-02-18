@@ -21,25 +21,28 @@ public class UpdateUserCommandImpl implements UpdateUserCommand {
     this.userReactiveRepository = userReactiveRepository;
   }
 
-  //    @Override
-  //    public Mono<String> execute(UpdateUserRequest request) {
-  //        return Mono.fromCallable(() -> updateUser(request))
-  //            .flatMap(user -> userRepository.save(user))
-  //            .map(user -> "User updated successfully.");
-  //    }
-
+//  @Override
+//  public Mono<String> execute(UpdateUserRequest request) {
+//    return Mono.fromCallable(() -> updateUser(request))
+//        .flatMap(user -> userRepository.save(user))
+//        .map(user -> "User updated successfully.");
+//  }
 
   @Override
   public Mono<String> execute(UpdateUserRequest request) {
-    return Mono.fromCallable(() -> updateUser(request))
-        .flatMap(user -> userReactiveRepository.save(user))
-        .map(user -> "User updated successfully.");
+    return userReactiveRepository.getFirstByUserName(request.getUserName())
+        .map(user -> {
+          BeanUtils.copyProperties(request, user);
+          userReactiveRepository.save(user);
+          return "User updated successfully.";
+        });
+
   }
 
-  private User updateUser(UpdateUserRequest request) {
-    User user = userRepository.getFirstByUserName(request.getUserName());
-    BeanUtils.copyProperties(request, user);
-    return user;
-  }
+//  private User updateUser(UpdateUserRequest request) {
+//    User user = userRepository.getFirstByUserName(request.getUserName());
+//    BeanUtils.copyProperties(request, user);
+//    return user;
+//  }
 
 }

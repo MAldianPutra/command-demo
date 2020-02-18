@@ -31,7 +31,7 @@ public class DeleteUserCommandImpl implements DeleteUserCommand {
   public Mono<String> execute(String userName) {
     return userReactiveRepository.getFirstByUserName(userName)
         .map(user -> {
-          userRepository.delete(user);
+          userReactiveRepository.delete(user);
           return "User deleted successfully";
         });
   }
